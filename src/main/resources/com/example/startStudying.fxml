@@ -3,23 +3,60 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.Region?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.StartStudyingController">
-    <children>
-        <Label text="Start Studying View" />
-        <Label fx:id="goalNameLabel" text="Loading Goal..." style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-        <Label fx:id="resultLabel" text="" wrapText="true" />
-        <ProgressBar fx:id="progressBar" prefWidth="250.0" progress="0.0" />
-        <Label text="Log Study Session (Hours):" />
-        <TextField fx:id="studyHoursField" maxWidth="150.0" promptText="e.g. 2.0" />
-        <Button onAction="#handleStudySession" text="Start Session" />
-        <Button onAction="#switchToPrimary" text="Back to Home" />
-    </children>
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-    </padding>
-</VBox>
+<BorderPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.StartStudyingController">
+    <top>
+        <HBox alignment="CENTER_LEFT">
+            <padding><Insets top="20" right="20" bottom="10" left="20"/></padding>
+            <Button text="←" styleClass="icon-button" onAction="#switchToPrimary"/>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label text="Start Studying" styleClass="header-label"/>
+            <Region HBox.hgrow="ALWAYS" />
+            <Region prefWidth="30"/> <!-- Spacer to balance the back button -->
+        </HBox>
+    </top>
+
+    <center>
+        <VBox alignment="CENTER" spacing="40">
+            <VBox alignment="CENTER" spacing="15">
+                <Label text="Select Duration" style="-fx-font-size: 18px;"/>
+                <HBox alignment="CENTER" spacing="15">
+                    <!-- <Button text="25 min" styleClass="pill-button" onAction="#handleDuration"/> -->
+                    <Button text="10 sec" styleClass="pill-button" onAction="#handleDuration"/>
+                    <Button text="50 min" styleClass="pill-button" onAction="#handleDuration"/>
+                    <Button text="90 min" styleClass="pill-button" onAction="#handleDuration"/>
+                </HBox>
+            </VBox>
+
+            <VBox alignment="CENTER" spacing="15">
+                <Label text="Select Break" style="-fx-font-size: 18px;"/>
+                <HBox alignment="CENTER" spacing="15">
+                    <!-- <Button text="5 min" styleClass="pill-button" onAction="#handleBreak"/> -->
+                    <Button text="5 sec" styleClass="pill-button" onAction="#handleBreak"/>
+                    <Button text="10 min" styleClass="pill-button" onAction="#handleBreak"/>
+                    <Button text="15 min" styleClass="pill-button" onAction="#handleBreak"/>
+                </HBox>
+            </VBox>
+
+            <VBox alignment="CENTER" spacing="15">
+                <Label text="Select Sessions" style="-fx-font-size: 18px;"/>
+                <HBox alignment="CENTER" spacing="15">
+                    <Button text="1" styleClass="pill-button" onAction="#handleSessions"/>
+                    <Button text="2" styleClass="pill-button" onAction="#handleSessions"/>
+                    <Button text="3" styleClass="pill-button" onAction="#handleSessions"/>
+                    <Button text="4" styleClass="pill-button" onAction="#handleSessions"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER" style="-fx-padding: 0 0 40 0;">
+            <Button text="✔" styleClass="plus-button" style="-fx-font-size: 50px; -fx-text-fill: #2e7d32;" onAction="#startTimer"/>
+        </HBox>
+    </bottom>
+</BorderPane>

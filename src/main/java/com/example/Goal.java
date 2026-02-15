@@ -10,9 +10,4 @@ public class Goal {
         this.cost = cost;
         this.currentAmount = currentAmount;
     }
-
-    @Override
-    public String toString() {
-        return name + " ($" + cost + ")";
-    }
 }
