@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
+
+<VBox alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.CreateGoalController">
+    <children>
+        <Label text="Create a New Goal" />
+        <Label text="Enter product link to auto-fill, or enter details manually." />
+        <TextField fx:id="linkTextField" promptText="Product Link (Optional)" />
+        <TextField fx:id="nameTextField" promptText="Product Name" />
+        <TextField fx:id="costTextField" promptText="Product Cost" />
+        <Button onAction="#addGoal" text="Add Goal" />
+        <Button onAction="#switchToPrimary" text="Back to Home" />
+    </children>
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+</VBox>

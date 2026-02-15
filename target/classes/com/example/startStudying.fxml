@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ProgressBar?>
+
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.StartStudyingController">
+    <children>
+        <Label text="Start Studying View" />
+        <Label fx:id="goalNameLabel" text="Loading Goal..." style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+        <Label fx:id="resultLabel" text="" wrapText="true" />
+        <ProgressBar fx:id="progressBar" prefWidth="250.0" progress="0.0" />
+        <Label text="Log Study Session (Hours):" />
+        <TextField fx:id="studyHoursField" maxWidth="150.0" promptText="e.g. 2.0" />
+        <Button onAction="#handleStudySession" text="Start Session" />
+        <Button onAction="#switchToPrimary" text="Back to Home" />
+    </children>
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+</VBox>

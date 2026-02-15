@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.PrimaryController">
+   <center>
+      <VBox alignment="CENTER" spacing="20.0">
+         <children>
+            <Label text="Primary View" />
+            <Label fx:id="mainGoalLabel" text="No Main Goal Selected" />
+            <ProgressBar fx:id="mainGoalProgressBar" prefWidth="200.0" progress="0.0" />
+            <Button onAction="#switchToStartStudying" text="Start Studying" />
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+   </center>
+   <bottom>
+      <HBox alignment="CENTER" spacing="20.0">
+         <children>
+            <Button onAction="#switchToGoals" text="Goals" />
+            <Button onAction="#switchToCreateGoal" text="Create Goal" />
+            <Button onAction="#switchToSettings" text="Settings" />
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </HBox>
+   </bottom>
+</BorderPane>
