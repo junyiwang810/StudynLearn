@@ -8,6 +8,6 @@ module com.example {
     requires org.seleniumhq.selenium.remote_driver;
     requires com.google.common;
 
-    opens com.example to javafx.fxml;
+    opens com.example.controller to javafx.fxml;
     exports com.example;
 }

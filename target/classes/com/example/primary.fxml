@@ -8,28 +8,29 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.Region?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.PrimaryController">
+<BorderPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controller.PrimaryController">
     <top>
         <HBox alignment="CENTER_LEFT" spacing="10">
             <padding><Insets top="20" right="20" bottom="10" left="20"/></padding>
             <Label text="Welcome back!" styleClass="header-label"/>
             <Region HBox.hgrow="ALWAYS" />
-            <Button text="≡" styleClass="icon-button" onAction="#switchToSettings"/>
+            <Button text="Goals" styleClass="icon-button" onAction="#switchToGoals"/>
         </HBox>
     </top>
-    
+
     <center>
         <VBox alignment="CENTER">
             <Button text="START EARNING!" styleClass="pill-green" style="-fx-font-size: 24px; -fx-padding: 15 40;" onAction="#switchToStudying"/>
         </VBox>
     </center>
-    
+
     <bottom>
         <HBox alignment="BOTTOM_LEFT">
             <padding><Insets top="20" right="20" bottom="30" left="30"/></padding>
-            
+
+            <Button text="Settings" styleClass="pill-button" onAction="#switchToSettings"/>
             <Region HBox.hgrow="ALWAYS" />
-            
+
             <VBox alignment="BOTTOM_RIGHT">
                 <Label fx:id="goalNameLabel" text="" style="-fx-font-size: 16px; -fx-text-fill: #333333; -fx-padding: 0 0 5 0;"/>
                 <Label fx:id="percentageLabel" text="0% There!" style="-fx-font-size: 28px; -fx-text-fill: #000000;"/>

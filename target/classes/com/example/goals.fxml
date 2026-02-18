@@ -8,18 +8,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 
-<VBox spacing="10.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.GoalsController">
+<VBox spacing="10.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controller.GoalsController">
     <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
     
     <HBox alignment="CENTER_LEFT">
         <Label text="Goals" styleClass="header-label"/>
-    </HBox>
-    
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <Label text="Example Goal" style="-fx-font-weight: bold;"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Label text="Price ($)"/>
-        <Label text="★" style="-fx-font-size: 16px;"/>
     </HBox>
 
     <ListView fx:id="goalsListView" VBox.vgrow="ALWAYS" />

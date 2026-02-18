@@ -5,10 +5,10 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.TimerController">
+<BorderPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controller.TimerController">
     <top>
         <HBox alignment="CENTER_LEFT">
             <padding><Insets top="20" right="20" bottom="10" left="20"/></padding>
@@ -24,6 +24,7 @@
         <VBox alignment="CENTER" spacing="20">
             <Label fx:id="timerLabel" text="00:00" style="-fx-font-size: 80px; -fx-font-weight: bold;"/>
             <Button fx:id="pauseButton" text="Pause" styleClass="pill-button" onAction="#handlePause"/>
+            <Button fx:id="startSessionButton" text="Start Session" styleClass="pill-green" onAction="#handleStartSession" visible="false" managed="false"/>
         </VBox>
     </center>
 </BorderPane>

@@ -5,6 +5,7 @@ import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Alert;
 import javafx.util.Duration;
 import org.openqa.selenium.WebDriver;
 
@@ -104,28 +105,43 @@ public class TimerController {
     }
 
     private void handlePhaseCompletion() {
+        timeline.pause();
         if (!isBreak) {
             // Study Session Complete
             processReward();
             
             if (currentSession < totalSessions) {
                 // Start Break
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Study Session Complete");
+                alert.setHeaderText(null);
+                alert.setContentText("Time for a break!");
+                alert.showAndWait();
+
                 isBreak = true;
                 timeSeconds = breakDurationMinutes * 60;
                 if (statusLabel != null) statusLabel.setText("Break Time!");
                 updateTimerLabel();
+                timeline.play();
             } else {
                 // All Sessions Complete
-                if (timeline != null) timeline.stop();
+                timeline.stop();
                 if (statusLabel != null) statusLabel.setText("All Sessions Complete!");
             }
         } else {
             // Break Complete
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Break Complete");
+            alert.setHeaderText(null);
+            alert.setContentText("Time to study!");
+            alert.showAndWait();
+
             isBreak = false;
             currentSession++;
             timeSeconds = studyDurationMinutes * 60;
             if (statusLabel != null) statusLabel.setText("Studying (Session " + currentSession + ")...");
             updateTimerLabel();
+            timeline.play();
         }
     }
 
