@@ -21,7 +21,7 @@ public class TimerController {
     private int timeSeconds;
     private Timeline timeline;
     private boolean isManuallyPaused = false;
-    private WebDriver studyDriver; // Assuming this is managed elsewhere or initialized
+    private WebDriver studyDriver;
     private List<String> whitelist = new ArrayList<>();
     private List<String> blacklist = new ArrayList<>();
     private boolean browserBlocked = false;
@@ -35,7 +35,6 @@ public class TimerController {
     @FXML
     public void initialize() {
         loadSettings();
-        // Initialize lists or driver here if needed
         startSession();
     }
 
@@ -48,7 +47,7 @@ public class TimerController {
             totalSessions = Integer.parseInt(props.getProperty("sessions", "1"));
             timeSeconds = studyDurationMinutes;
         } catch (IOException e) {
-            timeSeconds = 25 * 60; // Default fallback
+            timeSeconds = 25 * 60;
         }
     }
 
@@ -60,7 +59,7 @@ public class TimerController {
             if (!isManuallyPaused && timeSeconds > 0) {
                 timeSeconds--;
                 updateTimerLabel();
-                if (!isBreak) checkBrowser(); // Only check browser during study
+                if (!isBreak) checkBrowser();
             } else if (timeSeconds <= 0) {
                 handlePhaseCompletion();
             }
@@ -107,11 +106,9 @@ public class TimerController {
     private void handlePhaseCompletion() {
         timeline.pause();
         if (!isBreak) {
-            // Study Session Complete
             processReward();
             
             if (currentSession < totalSessions) {
-                // Start Break
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Study Session Complete");
                 alert.setHeaderText(null);
@@ -124,12 +121,10 @@ public class TimerController {
                 updateTimerLabel();
                 timeline.play();
             } else {
-                // All Sessions Complete
                 timeline.stop();
                 if (statusLabel != null) statusLabel.setText("All Sessions Complete!");
             }
         } else {
-            // Break Complete
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Break Complete");
             alert.setHeaderText(null);
@@ -151,7 +146,6 @@ public class TimerController {
             return;
         }
 
-        // Calculate reward
         Properties props = new Properties();
         String mainGoal = "";
         double rate = 0.0;
@@ -174,7 +168,6 @@ public class TimerController {
 
         double earned = (duration / 60.0) * rate;
 
-        // Update goals.txt
         File file = new File("goals.txt");
         List<String> lines = new ArrayList<>();
         boolean updated = false;
@@ -183,7 +176,6 @@ public class TimerController {
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    // Check if this line corresponds to the main goal
                     if (line.startsWith(mainGoal + ",")) {
                         int lastComma = line.lastIndexOf(',');
                         if (lastComma != -1) {

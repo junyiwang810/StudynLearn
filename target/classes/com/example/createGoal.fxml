@@ -4,39 +4,44 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
 <VBox spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controller.CreateGoalController">
-    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+    <padding><Insets bottom="30" left="30" right="30" top="30" /></padding>
     
-    <Label text="Create" styleClass="header-label"/>
+    <HBox alignment="CENTER_LEFT">
+        <Button onAction="#switchToGoals" styleClass="icon-button" text="← Back" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Label styleClass="page-title" text="Create Goal" />
+    </HBox>
+    
+    <Label styleClass="page-subtitle" text="Paste a product link or enter details manually." />
     
     <VBox spacing="5">
-        <Label text="Link:"/>
-        <TextField fx:id="linkTextField" promptText="Paste product link here"/>
+        <Label styleClass="sub-header-label" text="Product Link" />
+        <TextField fx:id="linkTextField" promptText="Paste product link here" />
     </VBox>
     
-    <HBox alignment="CENTER">
-        <Label text="OR" style="-fx-font-size: 16px; -fx-text-fill: #666666;"/>
+    <HBox alignment="CENTER_LEFT">
+        <Button fx:id="fetchButton" onAction="#fetchFromLink" styleClass="secondary-button" text="Fetch from Link" />
+        <Label styleClass="page-subtitle" text="   Fill name and price automatically." />
     </HBox>
     
     <VBox spacing="5">
-        <Label text="Name:"/>
-        <TextField fx:id="nameTextField"/>
+        <Label styleClass="sub-header-label" text="Goal Name" />
+        <TextField fx:id="nameTextField" promptText="e.g. New headphones" />
     </VBox>
     
     <VBox spacing="5">
-        <Label text="Price:"/>
-        <TextField fx:id="costTextField"/>
+        <Label styleClass="sub-header-label" text="Price" />
+        <TextField fx:id="costTextField" promptText="e.g. 129.99" />
     </VBox>
     
-    <Region VBox.vgrow="ALWAYS"/>
+    <Region VBox.vgrow="ALWAYS" />
     
-    <HBox>
-        <Button text="❮" styleClass="icon-button" onAction="#switchToPrimary"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button text="✓" styleClass="icon-button" style="-fx-font-size: 30px;" onAction="#addGoal"/>
+    <HBox alignment="CENTER_RIGHT">
+        <Button fx:id="saveButton" disable="true" onAction="#saveGoal" styleClass="primary-button" text="+ Save Goal" />
     </HBox>
 </VBox>

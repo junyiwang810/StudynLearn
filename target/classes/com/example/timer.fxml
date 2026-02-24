@@ -8,23 +8,27 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controller.TimerController">
+<BorderPane fx:id="timerRoot" focusTraversable="true" onKeyPressed="#handleKeyPressed" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controller.TimerController">
     <top>
-        <HBox alignment="CENTER_LEFT">
+        <VBox spacing="8">
             <padding><Insets top="20" right="20" bottom="10" left="20"/></padding>
-            <Button text="Cancel" styleClass="icon-button" onAction="#handleCancel"/>
-            <Region HBox.hgrow="ALWAYS" />
-            <Label fx:id="statusLabel" text="Studying..." styleClass="header-label"/>
-            <Region HBox.hgrow="ALWAYS" />
-            <Region prefWidth="50"/>
-        </HBox>
+            <HBox alignment="CENTER_LEFT">
+                <Button text="← Cancel Session" styleClass="icon-button" onAction="#handleCancel"/>
+                <Region HBox.hgrow="ALWAYS" />
+                <Label text="Focus Timer" styleClass="page-title"/>
+            </HBox>
+            <Label fx:id="statusLabel" text="Focus Session 1 of 1" styleClass="sub-header-label"/>
+            <Label fx:id="instructionLabel" text="Stay on task." styleClass="page-subtitle"/>
+        </VBox>
     </top>
 
     <center>
         <VBox alignment="CENTER" spacing="20">
-            <Label fx:id="timerLabel" text="00:00" style="-fx-font-size: 80px; -fx-font-weight: bold;"/>
-            <Button fx:id="pauseButton" text="Pause" styleClass="pill-button" onAction="#handlePause"/>
-            <Button fx:id="startSessionButton" text="Start Session" styleClass="pill-green" onAction="#handleStartSession" visible="false" managed="false"/>
+            <Label fx:id="timerLabel" text="00:00" styleClass="timer-display"/>
+            <HBox alignment="CENTER" spacing="10">
+                <Button fx:id="pauseButton" text="Pause" styleClass="secondary-button" onAction="#handlePause"/>
+                <Button fx:id="startSessionButton" text="Start Session" styleClass="primary-button" onAction="#handleStartSession" visible="false" managed="false"/>
+            </HBox>
         </VBox>
     </center>
 </BorderPane>

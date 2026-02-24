@@ -53,23 +53,37 @@ public class GoalRepository {
     }
 
     public boolean addAmountToGoal(String goalName, double amount) throws IOException {
+        double overflow = addAmountToGoalWithCap(goalName, amount);
+        return overflow != Double.MIN_VALUE;
+    }
+
+    public double addAmountToGoalWithCap(String goalName, double amount) throws IOException {
         List<Goal> goals = loadGoals();
-        boolean updated = false;
+        boolean found = false;
+        double overflow = 0.0;
         List<Goal> updatedGoals = new ArrayList<>();
 
         for (Goal goal : goals) {
             if (goal.getName().equals(goalName)) {
-                updatedGoals.add(new Goal(goal.getName(), goal.getCost(), goal.getCurrentAmount() + amount));
-                updated = true;
+                double updatedAmount = goal.getCurrentAmount() + amount;
+                if (goal.getCost() > 0 && updatedAmount > goal.getCost()) {
+                    overflow = updatedAmount - goal.getCost();
+                    updatedAmount = goal.getCost();
+                }
+                updatedGoals.add(new Goal(goal.getName(), goal.getCost(), updatedAmount));
+                found = true;
             } else {
                 updatedGoals.add(goal);
             }
         }
 
-        if (updated) {
+        if (found) {
             saveGoals(updatedGoals);
         }
-        return updated;
+        if (!found) {
+            return Double.MIN_VALUE;
+        }
+        return overflow;
     }
 
     private Optional<Goal> parseGoal(String line) {

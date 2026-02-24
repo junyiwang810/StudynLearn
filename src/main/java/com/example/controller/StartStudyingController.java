@@ -11,6 +11,8 @@ import java.io.IOException;
 
 public class StartStudyingController {
 
+    @FXML private Button startTimerButton;
+
     private Button selectedDurationButton;
     private Button selectedBreakButton;
     private Button selectedSessionButton;
@@ -21,10 +23,16 @@ public class StartStudyingController {
     private final SettingsRepository settingsRepository = new SettingsRepository();
 
     @FXML
+    public void initialize() {
+        updateStartTimerButtonState();
+    }
+
+    @FXML
     private void handleDuration(ActionEvent event) {
         Button clicked = (Button) event.getSource();
         selectedDurationButton = setSelectedButton(selectedDurationButton, clicked);
         studyDurationSeconds = parseButtonDurationToSeconds(clicked.getText());
+        updateStartTimerButtonState();
     }
 
     @FXML
@@ -32,6 +40,7 @@ public class StartStudyingController {
         Button clicked = (Button) event.getSource();
         selectedBreakButton = setSelectedButton(selectedBreakButton, clicked);
         breakDurationSeconds = parseButtonDurationToSeconds(clicked.getText());
+        updateStartTimerButtonState();
     }
 
     @FXML
@@ -39,6 +48,7 @@ public class StartStudyingController {
         Button clicked = (Button) event.getSource();
         selectedSessionButton = setSelectedButton(selectedSessionButton, clicked);
         sessions = Integer.parseInt(clicked.getText().trim());
+        updateStartTimerButtonState();
     }
 
     @FXML
@@ -65,10 +75,20 @@ public class StartStudyingController {
 
     private Button setSelectedButton(Button previous, Button next) {
         if (previous != null) {
-            previous.getStyleClass().remove("pill-green");
+            previous.getStyleClass().remove("selected-chip");
         }
-        next.getStyleClass().add("pill-green");
+        if (!next.getStyleClass().contains("selected-chip")) {
+            next.getStyleClass().add("selected-chip");
+        }
         return next;
+    }
+
+    private void updateStartTimerButtonState() {
+        if (startTimerButton == null) {
+            return;
+        }
+        boolean ready = studyDurationSeconds > 0 && breakDurationSeconds > 0 && sessions > 0;
+        startTimerButton.setDisable(!ready);
     }
 
     private int parseButtonDurationToSeconds(String text) {

@@ -1,7 +1,6 @@
 module com.example {
     requires javafx.controls;
     requires javafx.fxml;
-    requires javafx.media;
     requires java.desktop;
     requires org.seleniumhq.selenium.api;
     requires org.seleniumhq.selenium.chrome_driver;

@@ -24,10 +24,10 @@ public class PrimaryController {
     @FXML
     public void initialize() {
         ProgressInfo info = goalProgressService.getMainGoalProgress();
-        String goalName = info.getGoalName().isEmpty() ? "No Goal Set" : info.getGoalName();
+        String goalName = info.getGoalName().isEmpty() ? "No Main Goal" : info.getGoalName();
 
         goalNameLabel.setText(goalName);
-        percentageLabel.setText(info.getPercent() + "% There!");
+        percentageLabel.setText(info.getPercent() + "% Complete");
         fractionLabel.setText(String.format("$%.2f / $%.2f", info.getCurrent(), info.getCost()));
     }
 

@@ -5,6 +5,7 @@ import com.example.model.Goal;
 import com.example.repository.GoalRepository;
 import com.example.repository.SettingsRepository;
 import com.example.service.GoalProgressService;
+import com.example.service.RewardService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -12,11 +13,14 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
+import java.awt.Desktop;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +33,7 @@ public class GoalsController {
         goalRepository,
         new SettingsRepository()
     );
+    private final SettingsRepository settingsRepository = new SettingsRepository();
     private final List<Goal> goals = new ArrayList<>();
     private String mainGoalName = "";
 
@@ -37,6 +42,7 @@ public class GoalsController {
         mainGoalName = goalProgressService.getMainGoalName();
         goals.clear();
         goals.addAll(goalRepository.loadGoals());
+        goalsListView.setPlaceholder(new Label("No goals yet. Add your first goal."));
         goalsListView.setCellFactory(param -> createCell());
         goalsListView.getItems().setAll(goals);
     }
@@ -49,12 +55,16 @@ public class GoalsController {
                 if (empty || item == null) {
                     setText(null);
                     setGraphic(null);
-                    setStyle("-fx-background-color: transparent;");
                     return;
                 }
 
-                HBox row = new HBox(10);
+                HBox row = new HBox(8);
                 row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+                row.getStyleClass().add("goal-row");
+                boolean completed = item.getCost() > 0 && item.getCurrentAmount() >= item.getCost();
+                if (completed) {
+                    row.getStyleClass().add("completed-goal-row");
+                }
 
                 String displayName = item.getName();
                 if (displayName.length() > 25) {
@@ -62,29 +72,47 @@ public class GoalsController {
                 }
 
                 Label nameLabel = new Label(displayName);
-                nameLabel.setStyle("-fx-text-fill: black; -fx-font-size: 14px;");
-
-                Button deleteBtn = new Button("\uD83D\uDDD1");
-                deleteBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: black;");
-                deleteBtn.setOnAction(e -> deleteGoal(item));
+                nameLabel.setStyle(
+                    completed
+                        ? "-fx-text-fill: #9ca3af; -fx-font-size: 14px; -fx-font-weight: bold;"
+                        : "-fx-text-fill: #111827; -fx-font-size: 14px; -fx-font-weight: bold;"
+                );
 
                 Region spacer = new Region();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                Label priceLabel = new Label(String.format("%.2f", item.getCost()));
-                priceLabel.setStyle("-fx-text-fill: black;");
+                Label priceLabel = new Label(String.format("$%.2f / $%.2f", item.getCurrentAmount(), item.getCost()));
+                priceLabel.setStyle(completed ? "-fx-text-fill: #9ca3af; -fx-font-size: 13px;" : "-fx-text-fill: #374151; -fx-font-size: 13px;");
 
                 boolean isMainGoal = item.getName().equals(mainGoalName);
-                Button starBtn = new Button("\u2605");
-                starBtn.setStyle(
-                    "-fx-background-color: transparent; -fx-font-size: 16px; -fx-text-fill: " +
-                    (isMainGoal ? "#fbc02d" : "#cccccc") + ";"
-                );
-                starBtn.setOnAction(e -> setMainGoal(item));
+                Button setMainButton = new Button(isMainGoal ? "\u2605 Main Goal" : "\u2606 Set as Main");
+                setMainButton.getStyleClass().add("goal-action-button");
+                setMainButton.setVisible(!completed);
+                setMainButton.setManaged(!completed);
+                setMainButton.setTooltip(new Tooltip("Set as Main"));
+                setMainButton.setOnAction(e -> setMainGoal(item));
 
-                row.getChildren().addAll(nameLabel, deleteBtn, spacer, priceLabel, starBtn);
+                String link = settingsRepository.getString(RewardService.goalLinkKey(item.getName()), "");
+                Button openLinkButton = new Button("Open Link");
+                openLinkButton.getStyleClass().add("goal-action-button");
+                openLinkButton.setVisible(completed);
+                openLinkButton.setManaged(completed);
+                openLinkButton.setDisable(link.isEmpty());
+                openLinkButton.setTooltip(new Tooltip(link.isEmpty() ? "No link saved" : "Open saved purchase link"));
+                openLinkButton.setOnAction(e -> openLink(link));
+
+                Button deleteBtn = new Button("Delete");
+                deleteBtn.getStyleClass().add("danger-button");
+                deleteBtn.setTooltip(new Tooltip("Delete Goal"));
+                deleteBtn.setOnAction(e -> deleteGoal(item));
+
+                if (isMainGoal) {
+                    row.getStyleClass().add("main-goal-row");
+                }
+
+                row.getChildren().addAll(nameLabel, spacer, priceLabel, openLinkButton, setMainButton, deleteBtn);
                 setGraphic(row);
-                setStyle("-fx-background-color: transparent;");
+                setText(null);
             }
         };
     }
@@ -134,5 +162,22 @@ public class GoalsController {
     @FXML
     private void switchToCreateGoal() throws IOException {
         App.setRoot("createGoal");
+    }
+
+    private void openLink(String link) {
+        if (link == null || link.trim().isEmpty()) {
+            return;
+        }
+        try {
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().browse(URI.create(link.trim()));
+            }
+        } catch (Exception ignored) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Open Link Failed");
+            alert.setHeaderText(null);
+            alert.setContentText("Could not open the saved link.");
+            alert.showAndWait();
+        }
     }
 }
