@@ -1,12 +1,13 @@
 package com.example.controller;
 
 import com.example.App;
-import com.example.repository.BlacklistRepository;
 import com.example.repository.GoalRepository;
 import com.example.repository.SettingsRepository;
 import com.example.model.Goal;
+import com.example.model.StudySessionConfig;
 import com.example.service.RewardResult;
 import com.example.service.RewardService;
+import com.example.service.StudySessionConfigService;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
@@ -20,7 +21,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Duration;
-import org.openqa.selenium.WebDriver;
 
 import java.awt.Desktop;
 import java.io.IOException;
@@ -44,23 +44,18 @@ public class TimerController {
     private int currentSession = 1;
 
     private boolean manuallyPaused;
-    private boolean browserBlocked;
     private boolean onBreak;
 
     private Timeline timeline;
-    private WebDriver studyDriver;
 
-    private final List<String> whitelist = new ArrayList<>();
-    private List<String> blacklist = new ArrayList<>();
-
+    private final GoalRepository goalRepository = new GoalRepository();
     private final SettingsRepository settingsRepository = new SettingsRepository();
-    private final BlacklistRepository blacklistRepository = new BlacklistRepository();
-    private final RewardService rewardService = new RewardService(new GoalRepository(), settingsRepository);
+    private final StudySessionConfigService sessionConfigService = new StudySessionConfigService(settingsRepository);
+    private final RewardService rewardService = new RewardService(goalRepository, settingsRepository);
 
     @FXML
     public void initialize() {
         loadSettings();
-        blacklist = blacklistRepository.loadSites();
 
         onBreak = false;
         remainingSeconds = studyDurationSeconds;
@@ -79,20 +74,14 @@ public class TimerController {
     }
 
     private void loadSettings() {
-        studyDurationSeconds = settingsRepository.getInt(
-            "studyDurationSeconds",
-            settingsRepository.getInt("studyDuration", 25) * 60
-        );
-        breakDurationSeconds = settingsRepository.getInt(
-            "breakDurationSeconds",
-            settingsRepository.getInt("breakDuration", 5) * 60
-        );
-        totalSessions = settingsRepository.getInt("sessions", 1);
+        StudySessionConfig config = sessionConfigService.load();
+        studyDurationSeconds = config.getStudyDurationSeconds();
+        breakDurationSeconds = config.getBreakDurationSeconds();
+        totalSessions = config.getTotalSessions();
     }
 
     private void startCurrentPhase() {
         manuallyPaused = false;
-        browserBlocked = false;
         pauseButton.setText("Pause");
         pauseButton.setDisable(false);
 
@@ -116,9 +105,6 @@ public class TimerController {
             if (remainingSeconds > 0) {
                 remainingSeconds--;
                 updateTimerLabel();
-                if (!onBreak) {
-                    checkBrowser();
-                }
                 return;
             }
 
@@ -136,13 +122,6 @@ public class TimerController {
         timeline.stop();
 
         if (!onBreak) {
-            if (browserBlocked) {
-                setStatus("Focus session interrupted.");
-                setInstruction("Distraction detected. Reward was not applied for this session.");
-                advanceAfterStudyPhase();
-                return;
-            }
-
             RewardResult rewardResult = rewardService.applyRewardForStudySession();
             setStatus("Focus session complete.");
             setInstruction(rewardResult.getMessage());
@@ -177,34 +156,6 @@ public class TimerController {
         showStartSessionButton("Start Break");
         setStatus("Focus session complete.");
         setInstruction("Click Start Break to continue.");
-    }
-
-    private void checkBrowser() {
-        if (studyDriver == null) {
-            return;
-        }
-
-        try {
-            String currentUrl = studyDriver.getCurrentUrl();
-            if (currentUrl == null) {
-                return;
-            }
-
-            String lowerUrl = currentUrl.toLowerCase();
-            for (String allowed : whitelist) {
-                if (lowerUrl.contains(allowed.toLowerCase())) {
-                    return;
-                }
-            }
-
-            for (String blocked : blacklist) {
-                if (lowerUrl.contains(blocked.toLowerCase())) {
-                    browserBlocked = true;
-                    return;
-                }
-            }
-        } catch (Exception ignored) {
-        }
     }
 
     private void updateTimerLabel() {
@@ -252,12 +203,6 @@ public class TimerController {
     private void handleCancel() throws IOException {
         if (timeline != null) {
             timeline.stop();
-        }
-        if (studyDriver != null) {
-            try {
-                studyDriver.quit();
-            } catch (Exception ignored) {
-            }
         }
         App.setRoot("startStudying");
     }
@@ -353,7 +298,7 @@ public class TimerController {
         if (goalName == null || goalName.isEmpty()) {
             return false;
         }
-        Optional<Goal> goal = new GoalRepository().findByName(goalName);
+        Optional<Goal> goal = goalRepository.findByName(goalName);
         return goal.isPresent() && goal.get().getCost() > 0 && goal.get().getCurrentAmount() >= goal.get().getCost();
     }
 
@@ -377,7 +322,7 @@ public class TimerController {
             return queueOverflowForNewGoal(mainGoalName, overflowAmount);
         }
 
-        List<Goal> allGoals = new GoalRepository().loadGoals();
+        List<Goal> allGoals = goalRepository.loadGoals();
         List<Goal> eligibleGoals = new ArrayList<>();
         for (Goal goal : allGoals) {
             if (goal.getName().equals(mainGoalName)) {
@@ -415,8 +360,7 @@ public class TimerController {
         }
 
         try {
-            GoalRepository repo = new GoalRepository();
-            double remainingOverflow = repo.addAmountToGoalWithCap(selectedGoal.get(), overflowAmount);
+            double remainingOverflow = goalRepository.addAmountToGoalWithCap(selectedGoal.get(), overflowAmount);
 
             Alert success = new Alert(Alert.AlertType.INFORMATION);
             success.setTitle("Overflow Moved");
@@ -472,7 +416,7 @@ public class TimerController {
     }
 
     private void askToSetAnotherMainGoal(String completedGoalName) {
-        List<Goal> allGoals = new GoalRepository().loadGoals();
+        List<Goal> allGoals = goalRepository.loadGoals();
         List<String> candidateNames = new ArrayList<>();
         for (Goal goal : allGoals) {
             if (goal.getName().equals(completedGoalName)) {
